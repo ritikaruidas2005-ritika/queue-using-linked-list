@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the Node structure
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Initialize global pointers for the front and rear of the queue
+struct Node *front = NULL;
+struct Node *rear = NULL;
+
+// Function to add an element to the rear of the queue (enqueue)
+void enqueue(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node)); // Dynamically allocate memory
+    if (newNode == NULL) {
+        printf("Queue overflow (memory exhausted)\n");
+        return;
+    }
+    newNode->data = value;
+    newNode->next = NULL;
+
+    if (rear == NULL) { // If the queue is empty, set both front and rear to the new node
+        front = rear = newNode;
+        return;
+    }
+
+    rear->next = newNode; // Link the new node at the end of the list
+    rear = newNode; // Update the rear pointer to the new node
+}
+
+// Function to remove an element from the front of the queue (dequeue)
+void dequeue() {
+    if (front == NULL) { // Check if the queue is empty
+        printf("Queue is empty (Underflow)\n");
+        return;
+    }
+
+    struct Node* temp = front; // Store the current front node temporarily
+    front = front->next; // Move the front pointer to the next node
+
+    if (front == NULL) { // If the queue becomes empty after dequeue, update rear to NULL
+        rear = NULL;
+    }
+
+    free(temp); // Free the memory of the dequeued node
+}
+
+// Function to get the front element without removing it
+int peek() {
+    if (front == NULL) {
+        printf("Queue is empty, no front element.\n");
+        return -1; // Return an error value
+    }
+    return front->data; // Return the data of the front node
+}
+
+// Function to check if the queue is empty
+int isEmpty() {
+    return front == NULL; // Returns 1 if empty, 0 otherwise
+}
+
+// Function to display the elements in the queue
+void display() {
+    struct Node* temp = front;
+    if (temp == NULL) {
+        printf("Queue is empty.\n");
+        return;
+    }
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+// Example usage in a main function
+int main() {
+    enqueue(10);
+    enqueue(20);
+    enqueue(30);
+    printf("Queue: ");
+    display(); // Output: 10 -> 20 -> 30 -> NULL
+
+    printf("Front element is: %d\n", peek()); // Output: 10
+
+    dequeue();
+    printf("Queue after dequeue: ");
+    display(); // Output: 20 -> 30 -> NULL
+
+    dequeue();
+    dequeue();
+    printf("Queue after more dequeues: ");
+    display(); // Output: Queue is empty.
+
+    printf("Is queue empty? %d\n", isEmpty()); // Output: 1 (true)
+
+    return 0;
+}
